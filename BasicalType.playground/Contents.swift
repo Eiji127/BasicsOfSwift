@@ -125,13 +125,58 @@ let string = any as! String // 実行時エラー
 
 /*
  ・型の判定にはis演算子を使用
+ extension String : Comparable {
+
+     /// Returns a Boolean value indicating whether the value of the first
+     /// argument is less than that of the second argument.
+     ///
+     /// This function is the only requirement of the `Comparable` protocol. The
+     /// remainder of the relational operator functions are implemented by the
+     /// standard library for any type that conforms to `Comparable`.
+     ///
+     /// - Parameters:
+     ///   - lhs: A value to compare.
+     ///   - rhs: Another value to compare.
+     @inlinable public static func < (lhs: String, rhs: String) -> Bool
+ }
  */
 
 let abcd: Any = 1
 let isInt = abcd is Int // true
 
-// MARK: -
+// MARK: - 値比較のためのプロトコル
 
+/*
+ [Point]
+ ・プロトコル：それに準拠する方が持つべき性質を定義したもの
+ ・プロトコルに準拠した方は、プロトコルに定義されたプロパティやメソッドを実装する必要がある
+ ・プロトコルを用いるメリット = 異なる型に対して同じ性質を与えることで、異なる型を共通のインターフェースを通じて操作することが可能となる
+ */
+
+// 1. Equatableプロトコル
+/*
+ ・同値性を検証するためのプロトコル
+ extension String : Equatable {
+
+     /// Returns a Boolean value indicating whether two values are equal.
+     ///
+     /// Equality is the inverse of inequality. For any values `a` and `b`,
+     /// `a == b` implies that `a != b` is `false`.
+     ///
+     /// - Parameters:
+     ///   - lhs: A value to compare.
+     ///   - rhs: Another value to compare.
+     @inlinable public static func == (lhs: String, rhs: String) -> Bool
+ }
+ ・基本的な型(Bool,Int,Float,Double,String型etc)の多くはEquatableプロトコルに準拠している
+ ・プロトコルへの条件付き準拠：Optional<Wrapped>型のように、プレースホルダ型の種類によってプロトコルに準拠しているかどうか決まる型
+ */
+
+// 2. Comparableプロトコル
+/*
+ [Point]
+ ・値の大小関係を検証するためのプロトコル
+ */
 // MARK: -
 
 // MARK: -
