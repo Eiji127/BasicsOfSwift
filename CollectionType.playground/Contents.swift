@@ -65,12 +65,11 @@ print(dic3) // [:]
 
 // 1. ..<演算子
 let rangeDouble = 1.0..<3.5 // Range<Double>型、1.0以上3.5未満の範囲を示す
-    
-let range1 = 1..<4 // CountableRange(1..<4)
+let particialRangeUpTo = ..<3.5 //  ParticialRangeUpTo<Double>型、3.5未満という範囲を示す
+let range1 = 1..<4 // CountableRange(1..<4) ← Sequenceプロトコルに準拠
 for value in range1 {
     print(value)
 }
-
 /*
  実行結果(range1)
  1
@@ -78,8 +77,48 @@ for value in range1 {
  3
  */
 
+// 2. ...演算子
+let range2 = 1...4 // CountableClosedRange<Int> ← Sequenceプロトコルに準拠
+for value in range2 {
+    print(value)
+}
+/*
+ 実行結果(range1)
+ 1
+ 2
+ 3
+ 4
+ */
+
+// 3. 範囲型の操作
+/*
+ [Point]
+ ・範囲型の境界値へのアクセスは、lowerBoundとupperBoundプロパティを使用
+ ・upperBoundプロパティ → 範囲の末尾の値をBound型として返す
+ ・lowerBoundプロパティ → 範囲の先頭の値をBound型として返す
+ */
+
+let controllingRange = 1.0...4.0 // Range<Double>
+print(controllingRange.lowerBound) // 1.0
+print(controllingRange.upperBound) // 4.0
+
+let countableRange = 1..<4 // CountableRange<Int>
+print(countableRange.lowerBound) // 1
+print(countableRange.upperBound) // 4
+
+let closedRange = 1.0...4.0 // ClosedRange<Double>
+print(closedRange.lowerBound) // 1.0
+print(closedRange.upperBound) // 4.0
+
+let countableClosedRange = 1...4 // CountableClosedRange<Int>
+print(countableClosedRange.lowerBound) // 1
+print(countableClosedRange.upperBound) // 4
 
 
+// 4. 値が範囲に含まれるかどうかの判定(contain(_:)メソッド)
+let judgedRange = 1...4
+print(judgedRange.contains(2)) // true
+print(judgedRange.contains(5)) // false
 // MARK: -
 
 // MARK: -
