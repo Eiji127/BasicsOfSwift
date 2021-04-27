@@ -119,7 +119,63 @@ print(countableClosedRange.upperBound) // 4
 let judgedRange = 1...4
 print(judgedRange.contains(2)) // true
 print(judgedRange.contains(5)) // false
+
+
+// MARK: - コレクションとしてのString型
+
+// 1. Character型
+
+let string = "a" // String型：alphabetのように文字列を表す
+let character: Character = "a" // Character型：aのように単一の文字を表す
+
+// 2. String.Index型
+
+/*
+ [Feature]
+ ・文字列内の位置を表す型
+ ・String.Index型を用いることで、文字列内の特定の位置を指定し、その位置に存在する文字にアクセスする
+ ・String.Index型はString型の中にネストされている
+ ・String型からCharacter型を取り出すときは、サブスプリクトを利用する
+ */
+
+let string1 = "abc" // String型
+let startIndex = string1.startIndex // (String.Index型)：String型の先頭位置を表す
+let endIndex = string1.endIndex // (String.Index型)：String型の末端位置を表す
+
+print(string1[string1.startIndex]) // a
+//print(string1[string1.endIndex]) // 実行時エラー(string.endIndexは実際には末端文字の次の文字を表す)
+
+// 2番目の文字の取得
+let bIndex = string1.index(string1.startIndex, offsetBy: 1)
+let b = string1[bIndex] // b
+print(b)
+
+// 最後の文字の取得
+let cIndex = string1.index(string1.endIndex, offsetBy: -1)
+let c = string1[cIndex] // c
+print(c)
+
+/*
+ [Point]
+ ・最後の文字やn番目の文字のインデックスを取得するとき、index(_:offsetBy:)メソッドを使用する
+ */
+
+// MARK: - シーケンスとコレクションを扱うためのプロトコル
+/*
+ [Point]
+ ・シーケンス：ある要素に一方向から順次アクセス可能なデータ構造
+ （ex. 配列は先頭のインデックスから要素に順次アクセスできる）
+ ・シーケンスを汎用的に扱うためにSequenceプロトコルを使用
+ ・コレクション：一方向からの順次アクセスと、特定のインデックスの値への直接アクセスが可能なデータ構造
+ ・Collection > Sequence
+ ・コレクションを汎用的に扱うためにCollectionプロトコルを使用
+ */
+
 // MARK: -
+
+
+// MARK: -
+
 
 // MARK: -
 
