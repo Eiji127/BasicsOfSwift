@@ -206,6 +206,69 @@ default:
  */
 
 // 2. パターンマッチが使える場所
+/*
+ [Point]
+ ・パターンマッチは、switch文、if文、guard文、for-in文、while文でも使用可能
+ ・使用するときはcaseキーワードを指定する
+ */
+
+// - if文
+
+let value9 = 9
+
+if case 1...10 = value9 {
+    print("1以上10以下の値です")
+} else {
+    print("対象外の値です")
+}
+// 実行結果：1以上10以下の値です
+
+// - guard文
+
+func someFunction() {
+    let value = 9
+    guard case 1...10 = value else {
+        return
+    }
+    
+    print("1以上10以下の値です")
+}
+
+someFunction()
+// 実行結果：1以上10以下の値です
+
+// - for-in文
+
+let array = [1, 2, 3, 4]
+
+for case 2...3 in array {
+    print("2以上3以下の数字です")
+}
+/*
+ 実行結果：
+ 2以上3以下の数字です
+ 2以上3以下の数字です
+ */
+
+// - while文
+
+var nextValue = Optional(1)
+while case let value? = nextValue {
+    print("value: \(value)")
+    
+    if value >= 3 {
+        nextValue = nil
+    } else {
+        nextValue = value + 1
+    }
+}
+
+/*
+ 実行結果：
+ value: 1
+ value: 2
+ value: 3
+ */
 // MARK: -
 
 
