@@ -171,6 +171,39 @@ print(c)
  ・コレクションを汎用的に扱うためにCollectionプロトコルを使用
  */
 
+// 1. Sequenceプロトコル
+
+/*
+ [Point]
+ ・多くのインターフェースを提供するプロトコル
+ forEach(_:)メソッド：要素に対して順次アクセス
+ filter(_:)メソッド：要素を絞り込む
+ map(_:)メソッド：要素をシーケンスに変換し、それを1つのシーケンスに連結する
+ compactMap(_:)メソッド：要素を、失敗する可能性のある処理を用いて変換する
+ reduce(_:_:)メソッド：要素を1つの値にまとめる
+ */
+
+// 2. Collectionプロトコル
+
+/*
+ [Point]
+ ・CollectionプロトコルはSequenceプロトコルを継承している
+ ・多くのインターフェースが存在
+ サブスクリプトによる要素へのアクセス：指定した要素の読み書きを行う
+ isEmptyプロパティ：コレクションが空かどうか判断する
+ countプロパティ：要素の個数を取得する
+ firstプロパティ：最初の要素を取得する
+ lastプロパティ：最後の要素を取得する
+ */
+
+let originalArray = [1, 2, 3, 4, 5, 6]
+print(originalArray[3],
+      originalArray.isEmpty,
+      originalArray.count,
+      originalArray.first,
+      originalArray.last)
+
+
 // MARK: -
 
 
