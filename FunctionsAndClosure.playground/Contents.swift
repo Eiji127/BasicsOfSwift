@@ -64,6 +64,46 @@ search(byQuery: "query") // [1, 2, 3]
 
 // 4. インアウト引数
 
+func greet(user: inout String) {
+    if user.isEmpty {
+        user = "Anonymous"
+    }
+    print("Hello, \(user)")
+}
+
+var user: String = ""
+greet(user: &user) // Hello, Anonymous
+
+/*
+ [Point]
+ ・関数内での引数への再代入を関数外へ反映させるときに使用
+ ・インアウト引数を使用するには、引数の型の先頭にinoutキーワードを追加する
+ ・インアウト引数を持つ関数を呼び出すには、インアウト引数の先頭に&を追加する
+ */
+
+// 5. 可変長引数
+
+func print(strings: String...) {
+    if strings.count == 0 {
+        return
+    }
+    
+    print("first: \(strings[0])")
+    
+    for string in strings {
+        print("element: \(string)")
+    }
+}
+
+print(strings: "abc", "def", "ghi")
+/*
+ 実行結果：
+ first: abc
+ element: abc
+ element: def
+ element: ghi
+ */
+
 // MARK: -
 
 // MARK: -
