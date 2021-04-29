@@ -104,8 +104,100 @@ print(strings: "abc", "def", "ghi")
  element: ghi
  */
 
-// MARK: -
+/*
+ [Point]
+ ・任意の個数の値を受け取ることができる引数
+ ・Swiftでは1つの関数につき最大1つまで設定可能
+ */
 
+// 6. 戻り値
+
+// - 戻り値がない関数
+
+func say(user: String) {
+    print("Hello, \(user)!")
+}
+
+say(user: "Nishikawa") // Hello, Nishikawa!
+// 関数宣言で戻り値の型の定義を省略した際、関数の戻り値はVoid型となる
+// 以下と同じ
+/*
+func say(user: String) -> Void {
+    print("Hello, \(user)!")
+}
+
+say(user: "Nishikawa") // Hello, Nishikawa!
+*/
+
+// MARK: - クロージャ
+/*
+ [Feature]
+ ・クロージャは再利用可能なひとまとまりの処理
+ ・関数はfuncキーワードで定義し、クロージャはクロージャ式という定義方法がある
+ ・クロージャ型も関数のように (引数の型) -> 戻り値の型 という形式で表される
+ */
+
+let double = { (x: Int) -> Int in
+    return x * 2
+}
+
+print(double(2)) // 4
+
+/*
+ ・クロージャの型は通常の型と同じように扱える
+ ・変数や定数の型、関数の引数の型として利用することも可能
+ 
+ let closure: (Int) -> Int
+ func someFunction(x: (Int) -> Int) {}
+ 
+ */
+
+// 1. 型推論
+/*
+ [Point]
+ ・クロージャを宣言したとき引数と戻り値の型を宣言しているとその後の型を省略することができる
+ */
+var closure: (String) -> Int
+// 引数の型と戻り値の型を明示したとき
+closure = { (string: String) -> Int in
+    return string.count
+}
+closure("abc") // 3
+// 引数と戻り値の型を省略したとき
+closure = { string in
+    return string.count * 2
+}
+closure("abc") // 6
+
+// 引数と戻り値の型が決まっていないとき
+/*
+ let closure = { string in
+    return string.count * 2 // クロージャの型が決定しないためコンパイルエラー
+ }
+ */
+
+// 2. 引数
+/*
+ [Point]
+ ・クロージャ式は
+ 外部引数名、
+ デフォルト引数
+ が使用不可
+ ・インアウト引数、可変長引数、簡略引数名が使用可能
+ */
+
+// - 簡略引数名
+let isEqual: (Int, Int) -> Bool = {
+    return $0 == $1
+}
+
+print(isEqual(1, 1)) // true
+
+/*
+ [Point]
+ ・引数名の省略する代わりに簡略引数名を利用する
+ ・$に引数のインデックスをつけた$0、$1などを使用する
+ */
 // MARK: -
 
 // MARK: -
