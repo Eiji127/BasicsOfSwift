@@ -198,6 +198,63 @@ print(isEqual(1, 1)) // true
  ・引数名の省略する代わりに簡略引数名を利用する
  ・$に引数のインデックスをつけた$0、$1などを使用する
  */
+
+// 3. 引数としてのクロージャ
+
+/*
+ [Point]
+ ・クロージャを関数や別のクロージャの引数として利用する場合にのみ有効な仕様↓
+ ・属性：クロージャに対して指定する追加情報
+ ・トレイリングクロージャ：クロージャを引数に取る関数の可能性を高めるの仕様
+ */
+
+// 3.1 属性の指定方法
+/*
+ [Point]
+ ・クロージャの型の前に@属性名を追加する
+ ・属性にはescaping属性とautoclosure属性がある
+ */
+func or(_ lhs: Bool, _ rhs: @autoclosure () -> Bool) -> Bool {
+    if lhs {
+        return true
+    } else {
+        return rhs()
+    }
+}
+
+print(or(true, false)) // true
+
+// - escaping属性
+
+/*
+ [Point]
+ ・関数に引数として渡されたクロージャが、関数のスコープ外で保持される可能性があることを示す属性
+ ・escaping属性の有無によってコンパイラが「クロージャがキャプチャを行う必要があるか」判別する
+ */
+
+var queue = [() -> Void]()
+
+func enqueue(operation: @escaping () -> Void) {
+    queue.append(operation)
+}
+
+enqueue {
+    print("executed")
+}
+
+enqueue {
+    print("executed")
+}
+
+queue.forEach {
+    $0()
+}
+
+// - autoclosure属性
+/*
+ [Point]
+ ・引数をクロージャで包み込むことで遅延評価を実現する
+ */
 // MARK: -
 
 // MARK: -
