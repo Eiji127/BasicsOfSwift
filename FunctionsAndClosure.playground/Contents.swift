@@ -254,6 +254,84 @@ queue.forEach {
 /*
  [Point]
  ・引数をクロージャで包み込むことで遅延評価を実現する
+ → 遅延評価：実行結果から不要な関数の呼び出しを行わないように、第2引数をクロージャにすることで、必要になるまで評価を遅らせること
+ - メリット：無駄な関数の実行を回避できる
+ - デメリット：呼び出し側が煩雑になってしまう
+ → autoclosure属性を用いることで、メリットを享受し、デメリットを回避することが可能となる
+ */
+
+func judge(_ lhs: Bool, _ rhs: Bool) -> Bool {
+    if lhs {
+        print("true")
+        return true
+    } else {
+        print(rhs)
+        return rhs
+    }
+}
+
+func lhs() -> Bool {
+    print("lhs()関数が実行されました")
+    return true
+}
+
+func rhs() -> Bool {
+    print("rhs()関数が実行されました")
+    return false
+}
+
+print(judge(true, false))
+print(judge(lhs(), rhs()))
+
+/*
+ [Point]
+ ・judge(lhs(), rhs())を実行したとき、lhs()関数とrhs()関数の両方が実行されていることがわかる
+ → Swiftでは、関数の引数がその関数に引き渡されるより前に実行される(= 正格評価)
+ → 今回のjudge(_lhs:_rhs:)関数は実際には第2引数は実行される必要がない
+ → 第1引数がtrueであるとわかった時点で、第2引数を実行することなく、その結果をtrueと決定できる
+ */
+
+func judge1(_ lhs: Bool, _ rhs: () -> Bool) -> Bool {
+    if lhs {
+        print("true")
+        return true
+    } else {
+        let rhs = rhs()
+        print(rhs)
+        return rhs
+    }
+}
+
+judge1(lhs()) { () -> Bool in
+    return rhs()
+}
+/*
+ 実行結果：
+ lhs()関数が実行されました
+ true
+ 
+ → lhs()関数がtrueが返されたので、rhs()関数が実行されていない
+ */
+
+// autoclosure属性を適用したものが以下のもの
+
+func judge2(_ lhs: Bool, _ rhs: @autoclosure () -> Bool) -> Bool {
+    if lhs {
+        print("true")
+        return true
+    } else {
+        let rhs = rhs()
+        print(rhs)
+        return rhs
+    }
+}
+
+judge2(lhs(), rhs()) // ← わかりやすい！！
+
+/*
+ 実行結果：
+ lhs()関数が実行されました
+ true
  */
 
 // - トレイリングクロージャ
