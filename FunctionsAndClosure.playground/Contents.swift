@@ -335,7 +335,24 @@ judge2(lhs(), rhs()) // ← わかりやすい！！
  */
 
 // - トレイリングクロージャ
+/*
+ [Feature]
+ ・関数の最後の引数がクロージャの場合に、クロージャを()の外に書くことができる記法
+ */
 
+func execute(parameter: Int, handler: (String) -> Void) {
+    handler("parameter is \(parameter)")
+}
+
+// トレイリングクロージャを使用しないパターン
+execute(parameter: 1, handler: { string in
+    print(string)
+})
+
+// トレイリングクロージャを使用したパターン ← コードが読みやすい
+execute(parameter: 2) { string in
+    print(string)
+}
 
 // MARK: -
 
