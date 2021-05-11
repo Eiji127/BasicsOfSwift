@@ -252,7 +252,7 @@ struct Temparature2 {
 /*
  ・コンピューテッドプロパティはゲッタの定義は必須であるが、セッタの定義は任意
  ・セッタが存在しないとき、getキーワードと{}を省略することができる
-*/
+ */
 struct Greeting5 {
     var to = "Yosuke Ishikawa"
     var body: String {
@@ -262,9 +262,145 @@ struct Greeting5 {
 
 let greeting5 = Greeting5()
 print(greeting5.body)
-// MARK: -
-// MARK: -
-// MARK: -
+
+// MARK: - イニシャライザ
+
+// 1. イニシャライザとは
+
+/*
+ [Feature]
+ ・すべてのプロパティはインスタンス化の完了までに値の代入を完了させておかなければならない！！
+ ・プロパティの宣言時に初期値を持たないプロパティは、イニシャライザ内で初期化する必要あり
+ ・すべてのプロパティを正しい型の値で初期化する役割を担っている
+ ・定義方法→ initキーワードを用いる。
+ */
+
+struct Greeting6 {
+    let to: String
+    var body: String {
+        return "Hello, \(to)!"
+    }
+    
+    init(to: String) {
+        self.to = to
+    }
+}
+
+let greeting6 = Greeting6(to: "Yosuke Ishikawa")
+let body = greeting6.body
+print("body: \(body)") // 実行結果: Hello, Yosuke Ishikawa!
+
+// 2. 失敗可能イニシャライザ
+/*
+ [Feature]
+ ・プロパティを初期化できない可能性のあるイニシャライザの引数がある
+ → 失敗可能イニシャライザ(failable initializer)
+ → 結果をOptional<Wrapped>型を返す
+ ・定義方法はinitキーワードに?をつける
+ */
+
+struct Item {
+    let id: Int
+    let title: String
+    
+    init?(dictionary: [String: Any]) {
+        guard let id = dictionary["id"] as? Int,
+              let title = dictionary["title"] as? String else {
+            return nil
+        }
+        
+        self.id = id
+        self.title = title
+    }
+}
+
+let dictionaries: [[String: Any]] = [["id": 1, "title": "abc"],
+                                   ["id": 2, "title": "def"],
+                                   ["title": "ghi"],
+                                   ["id": 3, "title": "jkl"]
+]
+
+for dictionary in dictionaries {
+    if let item = Item(dictionary: dictionary) {
+        print(item)
+    } else {
+        print("Error: 辞書\(dictionary)からItemを生成できませんでした")
+    }
+}
+/*
+ 実行結果:
+ Item(id: 1, title: "abc")
+ Item(id: 2, title: "def")
+ Error: 辞書["title": "ghi"]からItemを生成できませんでした
+ Item(id: 3, title: "jkl")
+
+ → indexが2のdictionaryについて、idがかけていることから初期化が失敗している
+ */
+
+// MARK: - メソッド
+
+// 1. オーバーロード
+/*
+ オーバーロード：異なる型の引数や戻り値を取る同名のメソッドを複数用意し、引数に渡される型や戻り値の代入先の型に応じて実行するメソッドを切り替える手法
+ */
+// - 引数によるオーバーロード
+struct Printer {
+    func put(_ value: String) {
+        print("string: \(value)")
+    }
+    
+    func put(_ value: Int) {
+        print("int: \(value)")
+    }
+}
+
+let printer = Printer()
+printer.put("abc")
+printer.put(123)
+/*
+ 実行結果:
+ string: abc
+ int: 123
+ */
+
+// - 戻り値によるオーバーロード
+struct ValueContainer {
+    let stringValue = "abc"
+    let intValue = 123
+    
+    func getValue() -> String {
+        return stringValue
+    }
+    
+    func getValue() -> Int {
+        return intValue
+    }
+}
+
+let valueContainer = ValueContainer()
+let string: String = valueContainer.getValue()
+let int: Int = valueContainer.getValue()
+print("string: \(string), int: \(int)") // 実行結果: string: abc, int: 123
+
+// MARK: - サブスクリプト
+/*
+ ・サブスクリプト：配列や辞書などのコレクションの要素へのアクセスを統一的に表すための文法
+ ・定義方法→ subscriptキーワード + 引数・戻り値の型 + getキーワード(ゲッタ) + setキーワード(セッタ)
+     subscript(引数) -> 戻り値の型 {
+         get {
+             return 戻り値
+         }
+         
+         set {
+             値を更新する処理
+         }
+     }
+ */
+
+struct Progression {
+    var numbers: [Int]
+}
+
 // MARK: -
 // MARK: -
 // MARK: -
