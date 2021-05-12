@@ -399,9 +399,113 @@ print("string: \(string), int: \(int)") // 実行結果: string: abc, int: 123
 
 struct Progression {
     var numbers: [Int]
+    
+    subscript(index: Int) -> Int {
+        get {
+            return numbers[index]
+        }
+        
+        set {
+            numbers[index] = newValue
+        }
+    }
 }
 
-// MARK: -
+var progression = Progression(numbers: [1, 2, 3]) // 値の取得時なのでゲッタが呼ばれている
+let element1 = progression[1]
+print("element1: \(element1)") // element1: 2
+
+progression[1] = 4 // 値の更新なのでセッタが呼ばれている
+let element2 = progression[1]
+print("element2: \(element2)") // element2: 4
+
+// 引数が複数ある時
+
+struct Matrix {
+    var rows: [[Int]]
+    
+    subscript(row: Int, colum: Int) -> Int {
+        get {
+            return rows[row][colum]
+        }
+        
+        set {
+            rows[row][colum] = newValue
+        }
+    }
+}
+
+let matrix = Matrix(rows: [[1 ,2 ,3],
+                           [4, 5, 6],
+                           [7, 8, 9]
+])
+
+let element = matrix[1, 1]
+print(element) // 実行結果：5
+
+// - セッタの省略(セッタが存在しないとき)
+
+struct Progression1 {
+    var numbers: [Int]
+    
+    subscript(index: Int) -> Int {
+        return numbers[index]
+    }
+}
+
+var progression1 = Progression1(numbers: [1, 2, 3])
+print(progression1[0]) // 実行結果: 1
+
+// MARK: - 型のネスト
+
+/*
+ [Feature]
+ ・String.Index型のように、型のなかに型を定義することが可能
+ ・メリット：型名をより明快かつ簡潔にできる(↓ 例)
+ */
+
+/* before
+enum NewsFeedItemKind {
+    case a
+    case b
+    case c
+}
+
+struct NewsFeedItem {
+    let id: Int
+    let title: String
+    let type: NewsFeedItemKind
+}
+*/
+
+// after
+struct NewsFeedItem {
+    enum Kind {
+        case a
+        case b
+        case c
+    }
+    
+    let id: Int
+    let title: String
+    let kind: Kind
+    
+    init(id: Int, title: String, kind: Kind) {
+        self.id = id
+        self.title = title
+        self.kind = kind
+    }
+}
+
+let kind = NewsFeedItem.Kind.a
+let item = NewsFeedItem(id: 1, title: "Table", kind: kind)
+
+switch item.kind {
+case .a: print("kind is a")
+case .b: print("kind is b")
+case .c: print("kind is c")
+}
+
 // MARK: -
 // MARK: -
 // MARK: -
