@@ -1,0 +1,228 @@
+
+
+// MARK: - 値の受け渡し方法による分類
+/*
+ [Feature]
+ ・値の受け渡しの方法は大別して以下の２つ
+ - 値型
+ - 参照型
+ → 違い：変更を他の変数や定数と共有するかどうか（値型→共有しない、参照型→変更を共有する）
+ ・構造体と列挙型は値型、クラスは参照型
+ */
+
+// 1. 値型
+/*
+ [Feature]
+ ・インスタンスが値への参照ではなく値そのものを表す型
+ ・Swiftでは構造体、列挙型が該当
+ ・変数や定数への値型のインスタンスの代入は、インスタンスが表す値そのものを代入を意味する
+ → 複数の変数や定数で1つの値型のインスタンスを共有することができない
+ */
+
+var a = 4.0
+var b = a
+a.formSquareRoot()
+print("a: \(a), b: \(b)") // a: 2.0, b: 4.0 → aの値が更新されても、bの値には影響はない(値型の特徴の一つ)
+
+// - mutatingキーワード(自身の値の変更を宣言するキーワード)
+/*
+ [Feature]
+ ・mutating func メソッド名() -> 返り値の型 {}
+ → インスタンスの値を変更すると、インスタンスが格納されている変数への暗黙的な再代入が行われる
+ */
+extension Int {
+    mutating func increment() {
+        self += 1
+    }
+}
+
+var intA = 1 // 1
+intA.increment() // 2
+
+//let intB = 1
+//intB.increment() //再代入を行えないためコンパイルエラー
+
+// 2. 参照型
+/*
+ [Feature]
+ ・参照型：インスタンスが値への参照を表す型
+ ・Swiftでは、クラスが参照型
+ ・変数や定数への参照型の値の代入はインスタンスに対する参照の代入を意味する
+ → 複数の変数や定数で1つの参照型のインスタンスを共有することが可能
+ ・変数や定数への代入時や関数への受け渡し時にはインスタンスのコピーが発生しない
+ →効率的なインスタンスへの受け渡しができる
+ */
+class IntBox {
+    var value: Int
+    
+    init(value: Int) {
+        self.value = value
+    }
+}
+
+var aOfIntBox = IntBox(value: 1)
+var bOfIntBox = aOfIntBox
+
+aOfIntBox.value // 1
+bOfIntBox.value // 1
+
+aOfIntBox.value = 2
+
+aOfIntBox.value // 2
+bOfIntBox.value // 2
+
+// 3. 値型と参照型の使い分け
+/*
+ ・値型：変数や定数への代入や引数への受け渡しのたびにコピーされ、変更は共有されない
+ → 一度代入された値は明示的に再代入しない限りは不変である
+ ・参照型：変数や定数への代入や引数への受け渡しのたびにコピーされず参照が渡されるため、変更は共有される
+ → 一度代入された値が変更されないことの保証が難しい
+ 
+ [重要！]
+ ・安全にデータを取り扱うためには積極的に値型を使用するべき
+ ・参照型は状態管理などの変更の共有が必要となる範囲にのみ使用するべき
+ */
+
+
+// MARK: - 構造体
+// 1. メンバーワイズイニシャライザ(自動的に定義されるイニシャライザ)
+struct Article {
+    var id: Int
+    var title: String
+    var body: String
+    
+    // 以下と同等のイニシャライザが自動的に定義される
+//    init(id: Int, title: String, body: String) {
+//        self.id = id
+//        self.title = title
+//        self.body = body
+//    }
+}
+
+let article = Article(id: 1, title: "[Breaking!!]", body: "...")
+article.id // 1
+article.title // [Breaking!!]
+article.body // ...
+
+// MARK: - クラス
+/*
+ [Feature]
+ ・クラスは参照型であり、継承することができる
+ ・Cocoaのほとんどの型がクラスとして定義されている
+ */
+// 1. 継承
+/*
+ ・スーパークラス：継承先に対して、継承元のクラスのこと
+ ・サブクラス：継承元に対して、継承先のクラスのこと
+ → ほかのクラスのプロパティ、メソッド、イニシャライザなどの型を再利用することが可能
+ */
+
+class User {
+    let id: Int
+    
+    var message: String {
+        return "Hello"
+    }
+    
+    init(id: Int) {
+        self.id = id
+    }
+    
+    func printProfile() {
+        print("id: \(id)")
+        print("message: \(message)")
+    }
+}
+
+class RegisteredUser: User {
+    let name: String
+    
+    init(id: Int, name: String) {
+        self.name = name
+        super.init(id: id)
+    }
+}
+
+let registerdUser = RegisteredUser(id: 1, name: "Yosuke Ishikawa")
+let id = registerdUser.id
+let message = registerdUser.message
+registerdUser.printProfile()
+/*
+ 実行結果：
+ id: 1
+ message: Hello
+ */
+
+// 2. オーバーライド
+/*
+ ・オーバーライド：スーパークラスで定義されているプロパティやメソッドなどの要素を、サブクラスで再定義すること
+ ・finalキーワード：オーバライド可能な要素の前に付与することで、その要素がサブクラスでオーバライドされることを禁止できる
+ */
+
+class SuperClass {
+    func overridableMethod() {}
+    
+    final func finalMethod() {}
+}
+
+class SubClass: SuperClass {
+    override func overridableMethod() {
+        print("HELLO")
+    }
+    
+//    override func finalMethod() {} ← オーバライド不可のため、コンパイルエラー
+}
+
+// 3. イニシャライザの種類と初期化のプロセス
+/*
+ ・イニシャライザの役割
+    ⅰ. 型のインスタンス化の完了までにすべてのプロパティの初期化
+    ⅱ. 型の整合性を担保
+ 
+ ・2段階初期化：指定イニシャライザ + コンビニエンスイニシャライザ
+ */
+
+// - 指定イニシャライザ
+/*
+ ・指定イニシャライザ(designated initilizer)：クラスの主となるイニシャライザ。このイニシャライザの中ですべてのストアドプロパティが初期化される必要がある
+ ・一般的なイニシャライザ
+ */
+class Mail {
+    let from: String
+    let to: String
+    let title: String
+    
+    // 指定イニシャライザ
+    init(from: String, to: String, title: String) {
+        self.from = from
+        self.to = to
+        self.title = title
+    }
+}
+
+// - コンビニエンスイニシャライザ
+
+
+// MARK: -
+
+
+// MARK: -
+
+// MARK: -
+
+
+// MARK: -
+
+// MARK: -
+
+// MARK: -
+
+
+// MARK: -
+
+// MARK: -
+
+// MARK: -
+
+
+// MARK: -
