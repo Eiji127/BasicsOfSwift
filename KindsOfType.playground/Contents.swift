@@ -187,7 +187,7 @@ class SubClass: SuperClass {
  ・指定イニシャライザ(designated initilizer)：クラスの主となるイニシャライザ。このイニシャライザの中ですべてのストアドプロパティが初期化される必要がある
  ・一般的なイニシャライザ
  */
-class Mail {
+class Mail1 {
     let from: String
     let to: String
     let title: String
@@ -201,9 +201,114 @@ class Mail {
 }
 
 // - コンビニエンスイニシャライザ
+/*
+ ・コンビニエンスイニシャライザ：指定イニシャライザを中継するイニシャライザ
+ ・内部で引数を組み立て、指定イニシャライザを呼び出す必要がある
+ ・convenieceキーワードを使用
+ */
+class Mail2 {
+    let from: String
+    let to: String
+    let title: String
+    
+    // 指定イニシャライザ
+    init(from: String, to: String, title: String) {
+        self.from = from
+        self.to = to
+        self.title = title
+    }
+    
+    // コンビニエンスイニシャライザ
+    convenience init(from: String, to: String) {
+        self.init(from: from, to: to, title: "Hello, \(from).")
+    }
+}
+
+// - 2段階初期化
+/*
+ [指定イニシャライザの2段階初期化]
+ ⅰ. クラス内で新たに定義されたすべえのストアドプロパティを初期化、スーパークラスの指定イニシャライザを実行する。スーパークラスでも同様の初期化を行い、大元のクラスまで遡る
+ ⅱ. ストアドプロパティ以外の初期化を実行
+ 
+ [クラスのイニシャライザのルール3箇条]
+ ・指定イニシャライザは、スーパークラスの指定イニシャライザを呼ぶ
+ ・コンビニエンスイニシャライザは、同一クラスのイニシャライザを呼ぶ
+ ・コンビニエンスイニシャライザは、最終的に指定イニシャライザを呼ぶ
+ 
+ → これらのルールをすべて満たすことで、型の整合性が保証される
+ → 1つでもルールが満たされていないと、型の整合性が担保されていないことになり、コンパイルエラーとなる
+ */
+class User2 {
+    let id: Int
+    
+    init(id: Int) {
+        self.id = id
+    }
+    
+    func printProfile() {
+        print("id: \(id)")
+    }
+}
+
+class RegisteredUser2: User2 {
+    let name: String
+    
+    init(id: Int, name: String) {
+        // 第ⅰ段階
+        self.name = name
+        super.init(id: id)
+        
+        // 第ⅱ段階
+        self.printProfile()
+    }
+}
+
+// 4. クラスのメモリ管理
+/*
+ ・Swiftでは、ARC(Automatic Reference Counting)というメモリ管理方式を採用している
+ ・ARC：クラスのインスタンスを生成するたびに、そのインスタンスのためのメモリ管理を自動的に確保し、不要になったタイミングで自動的にメモリ領域を解放する
+ → 参照カウント：ARCにおいて、使用中のインスタンスのメモリが開放されてしまうのを防止するため、プロパティ、変数、定数からそれぞれのクラスのインスタンスへの参照がいくつかカウントされる。参照カウントが0のとき、そのインスタンスはどこからも参照されていないと判断し、メモリを解放する
+ */
+
+// - デイニシャライザ(インスタンスの終了処理)
+/*
+ ・デイニシャライザ：イニシャライザの逆、クリーンアップなどの終了処理を行うもの
+ ・ARCによってインスタンスが破棄されるタイミングで、クラスのデイニシャライザが実行される
+ ・deinitキーワードを使用する
+ */
+
+// 5. 値の比較と参照の比較
+/*
+ ・参照先が同じかどうかを知るためには===演算子を使用する
+ */
+
+class SomeClass: Equatable {
+    static func ==(lhs: SomeClass, rhs: SomeClass) -> Bool {
+        return true
+    }
+}
+
+let a1 = SomeClass()
+let b1 = SomeClass()
+let c1 = a1
+
+// 定数aとbは同じ値のとき
+a1 == b1 // true
+
+// 定数aとbの参照先が異なるとき
+a1 === b1 // false
+
+// 定数aとcが同じ参照先であるとき
+a1 === c1 // true
 
 
-// MARK: -
+// MARK: - 列挙型
+
+/*
+ [Feature]
+ ・列挙型は値型の一種、複数の識別子をまとめる型
+ ・標準ライブラリの一部の型は列挙型（ex. Optional<Wrapped>）
+ */
 
 
 // MARK: -
