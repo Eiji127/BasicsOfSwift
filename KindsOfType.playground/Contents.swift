@@ -308,7 +308,105 @@ a1 === c1 // true
  [Feature]
  ・列挙型は値型の一種、複数の識別子をまとめる型
  ・標準ライブラリの一部の型は列挙型（ex. Optional<Wrapped>）
+ ・enum内ではストアドプロパティを定義することができない
  */
+
+enum Weekday {
+    case sunday
+    case monday
+    case tuseday
+    case wednesday
+    case thursday
+    case friday
+    case saturday
+    
+    init?(japaneseName: String) {
+        switch japaneseName {
+        case "日": self = .sunday
+        case "月": self = .monday
+        case "火": self = .tuseday
+        case "水": self = .wednesday
+        case "木": self = .thursday
+        case "金": self = .friday
+        case "土": self = .saturday
+        default: return nil
+        }
+    }
+}
+
+let sunday = Weekday(japaneseName: "日") // Optional(Weekday.sunday)
+let monday = Weekday(japaneseName: "月") // Optional(Weekday.monday)
+
+print(sunday)
+print(monday)
+
+// 1. ローバリュー(実体の定義)
+/*
+ [Feature]
+ ・ローバリュー(raw value)：列挙型のケースそれぞれ対応するように設定できる値
+ → すべてのケースのろーバリューの型が同じである必要がある
+ */
+enum Symbol: Character {
+    case sharp = "#"
+    case dollar = "$"
+    case percent = "%"
+}
+
+let symbol = Symbol(rawValue: "#") // sharp
+let character = symbol?.rawValue // #
+
+// - ローバリューのデフォルト値
+/*
+ ・Int型やString型にはローバリューのデフォルト値が存在する
+ ・指定しないと、Int型では最初のケースから0, 1, 2...というように、
+ String型ではデフォルト値が設定される
+ */
+
+enum Option: Int {
+    case none
+    case one
+    case two
+    case undefined = 999
+    case three
+}
+
+Option.none.rawValue // 0
+Option.one.rawValue // 1
+Option.two.rawValue // 2
+Option.undefined.rawValue // 999
+Option.three.rawValue // 1000
+
+// 2. 連想値(associated value)
+enum Color {
+    case rgb(Float, Float, Float)
+    case cmyk(Float, Float, Float, Float)
+}
+
+let rgb = Color.rgb(0.0, 0.33, 0.66)
+let cmyk = Color.cmyk(0.0, 0.33, 0.66, 0.99)
+
+let color = Color.rgb(0.0, 0.33, 0.99)
+
+switch color {
+case .rgb(let r, let g, let b):
+    print("r: \(r), g: \(g), b: \(b)")
+case .cmyk(let c, let m, let y, let k):
+    print("c: \(c), m: \(m), y: \(y), k: \(k)")
+}
+// 実行結果: r: 0.0, g: 0.33, b: 0.99
+
+// 3. CaseIterableプロトコル
+/*
+ ・すべてのケースを配列として取得したいときに使用するプロトコル
+ ・CaseIterableプロトコルへの準拠を宣言した列挙型には自動的にallCasesスタティックプロパティが追加される
+ ・allCasesプロパティによって、列挙型の全ケースを配列として取得することが可能
+ ・連想値をもつ列挙型に対してはallCasesプロパティが自動生成されない
+ */
+enum Fruit: CaseIterable {
+    case peach, apple, grape
+}
+
+Fruit.allCases // [peach, apple, grape]
 
 
 // MARK: -
