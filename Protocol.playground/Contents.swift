@@ -90,6 +90,56 @@ struct SomeStruct3_1: SomeProtocol3 {
         // メソッドの実装
     }
 }
+
+// 3. 連想値
+/*
+ ・連想値(associated type)によって、プロトコルの準拠時にプロパティ、メソッドの引数、戻り値の型を指定することができる
+ → 1つの型に依存しない、より抽象的なプロトコルを定義することが可能
+ ・associatedtypeキーワードを使用する
+ 
+ protocol プロトコル名 {
+    associatedtype 連想型名
+    var プロパティ名； 連想型名
+    func メソッド名(引数名: 連想型名)
+    func メソッド名() -> 連想型名
+ }
+ */
+protocol SomeProtocol4 {
+    associatedtype AssociatedType
+    
+    // 連想型はプロパティやメソッドでも使用可能
+    var value: AssociatedType { get }
+    func someMethod(value: AssociatedType) -> AssociatedType
+}
+
+// AssociatedTypeを定義することで要件を満たす
+struct SomeStruct4_1 {
+    typealias AssociatedType = Int
+    
+    var value: AssociatedType
+    func someMethod(value: AssociatedType) -> AssociatedType {
+        return 1
+    }
+}
+
+// 実装からAssociatedTypeが自動的に決定する
+struct SomeStruct4_2: SomeProtocol4 {
+    var value: Int
+    func someMethod(value: Int) -> Int {
+        return 1
+    }
+}
+
+// ネスト型AssociatedTypeを定義することで要求を満たす
+struct SomeStruct4_3: SomeProtocol4 {
+    struct AssociatedType {}
+    
+    var value: AssociatedType
+    func someMethod(value: AssociatedType) -> AssociatedType {
+        return AssociatedType()
+    }
+}
+
 // MARK: -
 // MARK: -
 // MARK: -
