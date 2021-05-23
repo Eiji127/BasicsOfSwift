@@ -140,6 +140,107 @@ struct SomeStruct4_3: SomeProtocol4 {
     }
 }
 
+// ↓わかりやすい例
+protocol RandomValueGenerator {
+    associatedtype Value
+    
+    func randomValue() -> Value
+}
+
+struct IntegerRandomValueGenerator: RandomValueGenerator {
+    func randomValue() -> Int {
+        return Int.random(in: Int.min...Int.max)
+    }
+}
+
+struct StringRandomValueGenerator: RandomValueGenerator {
+    func randomValue() -> String {
+        let letters = "abcdefghijklmnopqrstuvwxyz"
+        let offset = Int.random(in: 0..<letters.count)
+        let index = letters.index(letters.startIndex, offsetBy: offset)
+        return String(letters[index])
+    }
+}
+/*
+ ↑ RandomValueGeneratorプロトコルでまず連想型としてValue型を指定し、準拠した構造体はInt型やString型などへと指定されるようになっている
+ → 1つの型に依存しない抽象的な性質を持った定義が可能となる
+ */
+
+// - 型制約の追加
+/*
+ ・プロトコルの連想型が準拠すべきプロトコルや継承すべきスーパークラスを指定することで、連想型に制約に設けることができる
+ protocol プロトコル名 {
+    associatedtype 連想型名: プロトコル名またはスーパークラス名
+ }
+ 
+ ・より詳細な制約の設定をするときはwhere節を追加する
+ → where節では、プロトコルに準拠する型自身をSelfキーワードで参照することができ、その連想型も.を付けてSelf.連想型のように参照することが可能
+ → Selfキーワードを省略して連想型とすることも可能
+ */
+
+class SomeClass {}
+
+protocol SomeProtocol5 {
+    associatedtype AssociatedType: SomeClass
+}
+
+class SomeSubClass: SomeClass {}
+
+struct ConformedStruct: SomeProtocol5 {
+    typealias AssociatedType = SomeSubClass
+}
+/*
+struct NonConformedStruct: SomeProtocol5 {
+    typealias AssociatedType = Int // コンパイルエラー(IntはSomeClassのサブクラスではない)
+}
+ 
+ → 連想型AssociatedTypeにSomeClass型を継承していなければならないという制約を設けている
+*/
+
+protocol Container {
+    associatedtype Content
+}
+
+protocol SomeData {
+    associatedtype ValueContainer: Container where
+        ValueContainer: Equatable
+}
+/*
+ ↑ SomeDataプロトコルの連想型ValueContainerの連想型Contentが、
+ Equatableプロトコルに準拠するという制約を課している
+ */
+
+protocol Container2 {
+    associatedtype Content
+}
+
+protocol SomeData2 {
+    associatedtype ValueContainer: Container2 where
+        ValueContainer.Content == Int
+}
+/*
+ ↑ ==による型の一致の制約も設定可能(SomeDataプロトコルの連想型ValueContainerの連想型ContentがInt型であるという制約を設けている)
+ */
+
+protocol Container3 {
+    associatedtype Content
+}
+
+protocol SomeData3 {
+    associatedtype Value
+    associatedtype ValueContainer: Container3 where
+        ValueContainer.Content: Equatable, ValueContainer.Content == Value
+}
+/*
+ ↑ 型制約を複数指定することが可能(SomeData3プロトコルの連想型ValueContainerの連想型Contentが、Equatableプロトコルに準拠し、なおかつ別の連想型Valueと一致するという制約を設けている)
+ */
+
+// - クラス専用プロトコル
+protocol SomeClassOnlyProtocol: class {}
+/*
+ ・準拠する型をクラスのみに限定できる
+ ・準拠する型が参照型であることが想定する場合に使用する
+ */
 // MARK: -
 // MARK: -
 // MARK: -
