@@ -303,7 +303,7 @@ dog.owner = "Yusei Nishikawa"
  */
 
 // MARK: - オプショナル型の利用指針
-
+min
 // MARK: -
 // MARK: -
 // MARK: -
