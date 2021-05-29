@@ -303,7 +303,58 @@ dog.owner = "Yusei Nishikawa"
  */
 
 // MARK: - オプショナル型の利用指針
-min
+/*
+ オプショナル型は安全なコードを書くことに非常に重要
+ [オプショナル型の利用指針]
+ ・Optional<Wrapped>型を利用するべきとき
+ ・暗黙的にアンラップされたOptional<Wrapped>型を利用するべきとき
+ ・比較検討するべきとき
+ */
+
+// 1. Optional<Wrapped>型を利用するべきとき
+/*
+ ・すべてのプロパティをOptional<Wrapped>型で宣言すると、コードの厳密性を損ね、冗長なコードを招く
+ [利用するべきとき]
+ → 値が不在が想定される時
+ */
+
+// 例：サービスのユーザー情報(ユーザー名は必須、メールアドレスは任意)
+struct User {
+    let id: Int
+    let name: String
+    let mailAddress: String? // ユーザーがメールアドレスを登録していない（持っていない）可能性を見越して?を付与
+    
+    init?(json: [String: Any]) {
+        guard let id = json["id"] as? Int,
+              let name = json["name"] as? String else {
+            // idやnameを初期化できなかった場合はインスタンスの初期化を失敗させる
+            return nil
+        }
+        self.id = id
+        self.name = name
+        self.mailAddress = json["email"] as? String
+    }
+}
+
+let json: [String: Any] = [
+    "id": 123,
+    "name": "Yusei Nishiyama"
+]
+
+if let user = User(json: json) {
+    print("id: \(user.id), name: \(user.name)")
+} else {
+    print("Invalid JSON")
+}
+
+// 2. 暗黙的にアンラップされたOptional<Wrapped>型を利用するべきとき
+/*
+ [利用するべき時]
+ ・初期化時にのみ値が決まっていない
+ ・サブクラスの初期化より前にスーパークラスの初期化が必要
+ */
+
+
 // MARK: -
 // MARK: -
 // MARK: -
