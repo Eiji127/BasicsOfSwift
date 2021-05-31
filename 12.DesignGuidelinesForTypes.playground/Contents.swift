@@ -354,7 +354,54 @@ if let user = User(json: json) {
  ・サブクラスの初期化より前にスーパークラスの初期化が必要
  */
 
+// 2.1 初期化時にのみ値が決まっていない
+/*
+ @IBOutlet weak var someLabel: UILabel!
+ ・storyboardファイルのアウトレットプロパティは、インスタンス化されるときに空であるが、その後必ずstoryboardから生成された値が設定される → 暗黙的にOptional<Wrapped>型の値を生成する
+ -> そのため、オプショナルバインディングや強制的なアンラップが必要となる↓
 
-// MARK: -
+import UIKit
+
+@IBOutlet weak var someLabel: UILabel!
+
+// オプショナルバインディングを行う場合
+if let label = someLabel {
+    label.text
+}
+// 強制アンラップを行う場合
+someLabel!.text
+
+ 
+ -> 上のコードは値の有無を意図的に使い分けるのでなければ、単に冗長にすぎない
+ 
+ */
+
+// 2.2 サブクラスの初期化より前にスーパークラスを初期化する
+class SuperClass {
+    let one = 1
+}
+
+class BaseClass: SuperClass {
+    var two: Int!
+    
+    override init() {
+        super.init()
+        two = one + 1
+    }
+}
+
+BaseClass().one // 1
+BaseClass().two // 2
+
+/*
+ ↑ スーパークラスの初期化時にはnil、それ以降は初期化された値が代入される
+ 
+ [追記]
+ ・super.init()を実行する前にスーパークラスのプロパティを参照していると、スーパークラスを初期化するまで、スーパークラスの値にアクセスすることができないためコンパイルエラーとなる
+ ・先にスーパークラスを初期化すると、スーパークラスのイニシャライザを呼び出す前にサブクラスのプロパティが初期化されている必要があるため、コンパイルエラーとなる
+ */
+
+// MARK: - Optional<Wrapped>型と暗黙的にアンラップされたOptional<Wrapped>型を比較検討するべき時
+
 // MARK: -
 // MARK: -
